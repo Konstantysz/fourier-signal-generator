@@ -3,10 +3,13 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 
+#include "DisplayWindow.h"
+
 int main()
 {
-    cv::Mat xd;
-    std::cout << "Hello World!\n";
+    DisplayWindow Window(800, 600);
+
+    Window.drawAnimation();
 
     return 0;
 }
