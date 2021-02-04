@@ -1,45 +1,84 @@
 #include "DisplayWindow.h"
 
-void DisplayWindow::draw(cv::Mat& frame) {
-    int r1 = 100;
-    int r2 = 25;
-    int r3 = 10;
-    int r4 = 5;
+void Wave::addHarmonic(Harmonic h) {
+    fourierSeries.push_back(h);
+}
 
-    float f1 = 0.5;
-    float f2 = 5;
-    float f3 = 10;
-    float f4 = 25;
+void Wave::calcYPos() {
+    if (fourierSeries.size() > 0) {
+        y.push_back(fourierSeries.back().value.y);
+    }
+}
 
-    cv::Point p0(frame.cols / 4, frame.rows / 2);
-    cv::Point p1(p0.x + r1 * cos(f1 * this->time), p0.y + r1 * sin(f1 * this->time));
-    cv::Point p2(p1.x + r2 * cos(f2 * this->time), p1.y + r2 * sin(f2 * this->time));
-    cv::Point p3(p2.x + r3 * cos(f3 * this->time), p2.y + r3 * sin(f3 * this->time));
-    cv::Point p4(p3.x + r4 * cos(f4 * this->time), p3.y + r4 * sin(f4 * this->time));
-
-    this->wave.push_back(p4.y);
-
-    cv::circle(frame, p0, r1, this->color);
-    cv::line(frame, p0, p1, this->color);
-    cv::circle(frame, p1, r2, this->color);
-    cv::line(frame, p1, p2, this->color);
-    cv::circle(frame, p2, r3, this->color);
-    cv::line(frame, p2, p3, this->color);
-    cv::circle(frame, p3, r4, this->color);
-    cv::line(frame, p3, p4, this->color);
-
-
-    int xWaveTranslation = frame.cols / 2;
-    if (wave.size() > 1) {
-        for (int i = 0; i < wave.size() - 1; i++) {
-            cv::line(frame, cv::Point(i + xWaveTranslation, wave[i]), cv::Point(i + 1 + xWaveTranslation, wave[i + 1]), this->color);
-        }
+SquareWave::SquareWave(int n, cv::Mat frame) {
+    float t = 0;
+    this->addHarmonic(Harmonic(
+        t, 100, 1, 0,
+        cv::Point(frame.cols / 4, frame.rows / 2))
+    );
+    for (int i = 1; i < n; i++) {
+        float f = 2 * i + 1;
+        float a = (1 / f) * 100;
+        this->addHarmonic(Harmonic(
+            t, a, f, 0,
+            this->fourierSeries.back().value)
+        );
     }
 
-    if (this->wave.size() > frame.rows / 2)
-        this->wave.erase(wave.begin());
+}
+
+void DisplayWindow::drawAxis(cv::Mat& frame) {
+    cv::Scalar axisColor(127, 127, 127);
+    cv::Point start(frame.cols / 2, frame.rows / 2);
+    cv::Point end(frame.cols / 2 + frame.rows / 2, frame.rows / 2);
+    cv::line(frame, start, end, axisColor);
+    int len = end.x - start.x;
+    for (int i = 0; i < len; i++) {
+        if (i % 10 == 0) {
+            cv::Point upper(start.x + i, start.y + 5);
+            cv::Point lower(start.x + i, start.y - 5);
+            cv::line(frame, upper, lower, axisColor);
+        }
+    }
+}
+
+
+void DisplayWindow::draw(cv::Mat& frame) {
+
+    //SquareWave wave(10, this->time, frame);
+    wave.addHarmonic(Harmonic(
+        this->time, 100, 1, 0,
+        cv::Point(frame.cols / 4, frame.rows / 2))
+    );
+    for (int i = 1; i < 15; i++) {
+        float f = 2 * i + 1;
+        float a = (1 / f) * 100;
+        wave.addHarmonic(Harmonic(
+            this->time, a, f, 0,
+            wave.fourierSeries.back().value)
+        );
+    }
+
+    wave.calcYPos();
+
+    for (auto h : wave.fourierSeries) {
+        cv::circle(frame, h.center, h.amplitude, this->color);
+        cv::line(frame, h.center, h.value, this->color);
+    }
+
+    int xWaveTranslation = frame.cols / 2;
+    if (wave.y.size() > 1) {
+        for (int i = 0; i < wave.y.size() - 1; i++) {
+            cv::line(frame, cv::Point(i + xWaveTranslation, wave.y[i]), cv::Point(i + 1 + xWaveTranslation, wave.y[i + 1]), this->color);
+        }
+    }
+    drawAxis(frame);
+
+    if (wave.y.size() > frame.rows / 2)
+        wave.y.erase(wave.y.begin());
 
     this->time += 0.05;
+    wave.fourierSeries.clear();
 }
 
 void DisplayWindow::drawAnimation() {
