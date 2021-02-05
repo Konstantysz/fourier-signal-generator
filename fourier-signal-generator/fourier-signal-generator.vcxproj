@@ -147,9 +147,11 @@
   <ItemGroup>
     <ClCompile Include="DisplayWindow.cpp" />
     <ClCompile Include="fourier-signal-generator.cpp" />
+    <ClCompile Include="Wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DisplayWindow.h" />
+    <ClInclude Include="Wave.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,43 +4,23 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 
-struct Harmonic {
-    Harmonic(float t, float a, float f, float phi, cv::Point c) : t(t), amplitude(a), frequency(f), phase(phi), center(c),
-        value(cv::Point(center.x + amplitude * cos(frequency * t + phase), center.y + amplitude * sin(frequency * t + phase))) {}
-    float t;
-    float amplitude;
-    float frequency;
-    float phase;
-    cv::Point center;
-    cv::Point value;
-};
-
-class Wave {
-public:
-    std::vector<int> y;
-    std::vector<Harmonic> fourierSeries;
-
-public:
-    void addHarmonic(Harmonic);
-    void calcYPos();
-    void updateHarmonics(float);
-};
-
-class SquareWave : public Wave {
-    SquareWave(int, cv::Mat);
-};
+#include "Wave.h"
 
 class DisplayWindow
 {
 private:
 	int width, height;
     float time;
-    //SquareWave wave;
-    Wave wave;
+    Wave* wave;
     cv::Scalar color;
 
 public:
-    DisplayWindow(int w, int h) : width(w), height(h), time(0.f), color(cv::Scalar(255, 255, 255))/*, wave(10, frame)*/{}
+    DisplayWindow(int w, int h) : width(w), height(h), time(0.f), color(cv::Scalar(255, 255, 255)) {
+        //this->wave = new SawToothWave(10, w, h);
+        //this->wave = new SquareWave(20, w, h);
+        this->wave = new PulseWave(20, 0.9, w, h);
+        //this->wave = new TriangleWave(50, w, h);
+    }
     void drawAxis(cv::Mat&);
     void draw(cv::Mat&);
     void drawAnimation();
