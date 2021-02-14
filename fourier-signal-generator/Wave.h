@@ -42,8 +42,3 @@ class TriangleWave : public Wave {
 public:
     TriangleWave(int, int, int, float = 100, float = 0.1);
 };
-
-class AbsSinWave : public Wave {
-public:
-    AbsSinWave(int, int, int, float = 100, float = 0.1);
-};

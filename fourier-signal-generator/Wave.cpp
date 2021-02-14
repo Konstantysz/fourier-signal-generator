@@ -73,19 +73,3 @@ TriangleWave::TriangleWave(int n, int winW, int winH, float amplitude, float fre
         );
     }
 }
-
-AbsSinWave::AbsSinWave(int n, int winW, int winH, float amplitude, float frequency) {
-    float t = 0;
-    this->addHarmonic(Harmonic(
-        t, 50 * D, 1, 0,
-        cv::Point(winW / 4, winH / 2))
-    );
-    for (int i = 1; i < n; i++) {
-        float f = i;
-        float a = sin(PI * i * D) * (2 / i);
-        this->addHarmonic(Harmonic(
-            t, a, f, 0,
-            this->fourierSeries.back().value)
-        );
-    }
-}
