@@ -16,10 +16,10 @@ private:
 
 public:
     DisplayWindow(int w, int h) : width(w), height(h), time(0.f), color(cv::Scalar(255, 255, 255)) {
-        //this->wave = new SawToothWave(10, w, h);
-        //this->wave = new SquareWave(20, w, h);
-        this->wave = new PulseWave(20, 0.9, w, h);
-        //this->wave = new TriangleWave(50, w, h);
+        this->wave = new SawToothWave(100, w, h, 100.f, 0.1f);
+        //this->wave = new SquareWave(5, w, h, 100.f, 0.5f);
+        //this->wave = new AbsSinWave(100, w, h, 100.f, 0.1f);
+        //this->wave = new TriangleWave(10, w, h, 100.f, 0.05f);
     }
     void drawAxis(cv::Mat&);
     void draw(cv::Mat&);

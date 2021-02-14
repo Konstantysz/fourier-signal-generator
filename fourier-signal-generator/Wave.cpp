@@ -17,15 +17,18 @@ void Wave::updateHarmonics(float t) {
     }
 }
 
-SquareWave::SquareWave(int n, int winW, int winH) {
+SquareWave::SquareWave(int n, int winW, int winH, float amplitude, float frequency) {
     float t = 0;
+    float swc = (4 / PI) * amplitude;
+    float freqCons = 2 * PI * frequency;
     this->addHarmonic(Harmonic(
-        t, 100, 1, 0,
+        t, swc, freqCons, 0,
         cv::Point(winW / 4, winH / 2))
     );
     for (int i = 1; i < n; i++) {
-        float f = 2 * i + 1;
-        float a = (1 / f) * 100;
+        float N = 2 * i + 1;
+        float a = swc / N;
+        float f = N * freqCons;
         this->addHarmonic(Harmonic(
             t, a, f, 0,
             this->fourierSeries.back().value)
@@ -33,15 +36,18 @@ SquareWave::SquareWave(int n, int winW, int winH) {
     }
 }
 
-SawToothWave::SawToothWave(int n, int winW, int winH) {
+SawToothWave::SawToothWave(int n, int winW, int winH, float amplitude, float frequency) {
     float t = 0;
+    float swc = (2 * amplitude) / PI;
+    float freqCons = 2 * PI * frequency;
     this->addHarmonic(Harmonic(
-        t, 100, 1, 0,
+        t, swc, freqCons, 0,
         cv::Point(winW / 4, winH / 2))
     );
     for (int i = 1; i < n; i++) {
-        float f = i;
-        float a = (pow(-1, i) * 100) / (PI * i);
+        float N = i + 1;
+        float a = (swc * pow(-1, N + 1)) / N;
+        float f = N * freqCons;
         this->addHarmonic(Harmonic(
             t, a, f, 0,
             this->fourierSeries.back().value)
@@ -49,23 +55,26 @@ SawToothWave::SawToothWave(int n, int winW, int winH) {
     }
 }
 
-TriangleWave::TriangleWave(int n, int winW, int winH) {
+TriangleWave::TriangleWave(int n, int winW, int winH, float amplitude, float frequency) {
     float t = 0;
+    float swc = (8 / (PI * PI)) * amplitude;
+    float freqCons = 2 * PI * frequency;
     this->addHarmonic(Harmonic(
-        t, 50, 1, 0,
+        t, swc, freqCons, PI / 2,
         cv::Point(winW / 4, winH / 2))
     );
     for (int i = 1; i < n; i++) {
-        float f = i;
-        float a = (pow(-1, (i - 1) / 2) * 100) / (i * i);
+        float N = 2 * i - 1;
+        float a = swc / (N * N);
+        float f = N * freqCons;
         this->addHarmonic(Harmonic(
-            t, a, f, 0,
+            t, a, f, PI / 2,
             this->fourierSeries.back().value)
         );
     }
 }
 
-PulseWave::PulseWave(int n, float D, int winW, int winH) {
+AbsSinWave::AbsSinWave(int n, int winW, int winH, float amplitude, float frequency) {
     float t = 0;
     this->addHarmonic(Harmonic(
         t, 50 * D, 1, 0,

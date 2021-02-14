@@ -30,20 +30,20 @@ public:
 
 class SquareWave : public Wave {
 public:
-    SquareWave(int, int, int);
+    SquareWave(int, int, int, float = 100, float = 0.1);
 };
 
 class SawToothWave : public Wave {
 public:
-    SawToothWave(int, int, int);
+    SawToothWave(int, int, int, float = 100, float = 0.1);
 };
 
 class TriangleWave : public Wave {
 public:
-    TriangleWave(int, int, int);
+    TriangleWave(int, int, int, float = 100, float = 0.1);
 };
 
-class PulseWave : public Wave {
+class AbsSinWave : public Wave {
 public:
-    PulseWave(int, float, int, int);
+    AbsSinWave(int, int, int, float = 100, float = 0.1);
 };
